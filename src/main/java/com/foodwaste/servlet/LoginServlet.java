@@ -12,7 +12,7 @@ public class LoginServlet extends HttpServlet {
     
 	private static final long serialVersionUID = 1L;
 	
-	private static List<User> users=new ArrayList<>();
+	public static List<User> users=new ArrayList<>();
 	public static void addUser(User user) {
 		users.add(user);
 	}
