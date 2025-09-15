@@ -53,7 +53,7 @@ public class Donation {
 	{
 		return quantity;
 	}
-	public void setQUantity(String quantity)
+	public void setQuantity(String quantity)
 	{
 		this.quantity=quantity;
 	}
