@@ -35,7 +35,7 @@ public class Recipient {
     {
     	return name;
     }
-    public void getName(String name)
+    public void setName(String name)
     {
     	this.name=name;
     }
@@ -45,7 +45,7 @@ public class Recipient {
     {
     	return contactperson;
     }
-    public void getContactperson(String contactperson)
+    public void setContactperson(String contactperson)
     {
     	this.contactperson=contactperson;
     }
@@ -55,7 +55,7 @@ public class Recipient {
     {
     	return phone;
     }
-    public void getPhone(String phone)
+    public void setPhone(String phone)
     {
     	this.phone=phone;
     }
@@ -65,7 +65,7 @@ public class Recipient {
     {
     	return address;
     }
-    public void getAddress(String address)
+    public void setAddress(String address)
     {
     	this.address=address;
     }
@@ -75,7 +75,7 @@ public class Recipient {
     {
     	return recipienttype;
     }
-    public void getRecipienttype(String recipienttype)
+    public void setRecipienttype(String recipienttype)
     {
     	this.recipienttype=recipienttype;
     }
