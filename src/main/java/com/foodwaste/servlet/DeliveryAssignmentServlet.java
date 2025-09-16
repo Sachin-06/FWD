@@ -19,7 +19,7 @@ public class DeliveryAssignmentServlet extends HttpServlet {
     private static List<Donation> donations = DonorSubmissionServlet.donations;
 
     // List to store all deliveries assigned so far
-    private static List<Delivery> deliveries = new ArrayList<>();
+    public static List<Delivery> deliveries = new ArrayList<>();
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
