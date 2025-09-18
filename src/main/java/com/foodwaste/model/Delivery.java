@@ -59,7 +59,7 @@ public class Delivery {
     }
     
     
-    public int getrecipientid()
+    public int getRecipientid()
     {
     	return recipientid;
     }
