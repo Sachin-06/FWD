@@ -1,14 +1,13 @@
 package com.foodwaste.servlet;
 
 import java.util.*;
-//import com.foodwaste.servlet.*;
 import javax.servlet.*;
 import com.foodwaste.model.*;
 import java.io.*;
 import javax.servlet.http.*;
 import org.json.JSONObject;
 
-public class DeliveryUpdateServlet {
+public class DeliveryUpdateServlet extends HttpServlet{
 	
 	public static final long serialVersionUID=1L;
 	

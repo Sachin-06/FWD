@@ -43,6 +43,11 @@ public class RegisterServlet extends HttpServlet {
         JSONObject json = new JSONObject();
         
         if (emailExists(email)) {
+        	
+        	json.put("status","fail");
+        	json.put("message","Email registered already");
+        }else {
+        	
         	User user=new User();
         	user.setName(name);
         	user.setEmail(email);
@@ -52,10 +57,11 @@ public class RegisterServlet extends HttpServlet {
         	user.setAddress(address);
         	
         	users.add(user);
-        }
+       
         
         json.put("status", "success");
         json.put("message", "User registered successfully!");
+        }
 
         out.print(json.toString());
     }

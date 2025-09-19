@@ -8,7 +8,8 @@ import java.util.*;
 import java.io.*;
 
 
-public class RecipientServlet {
+public class RecipientServlet extends HttpServlet{
+	public static final long serialVersionUID=1L;
 	public static List<Recipient> recipients=new ArrayList<>();
 	
 	
