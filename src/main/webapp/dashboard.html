@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dashboards</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav><button onclick="location.href='index.html'">Home</button></nav>
+    <h3>View Dashboards</h3>
+    <button onclick="loadDashboard('donor')">Donor Dashboard</button>
+    <button onclick="loadDashboard('delivery')">Delivery Dashboard</button>
+    <button onclick="loadDashboard('admin')">Admin Dashboard</button>
+    <div id="dashboardPanel"></div>
+  </div>
+  <script>
+    function loadDashboard(type) {
+      let url, msg;
+      if (type === 'donor') {
+        let uid = prompt('Enter your User ID');
+        url = 'DonorDashboardServlet?donorid=' + uid;
+        msg = 'Your Donations:';
+      } else if (type === 'delivery') {
+        let uid = prompt('Enter Delivery User ID');
+        url = 'DeliveryDashboardServlet?deliveryPersonId=' + uid;
+        msg = 'Assigned Deliveries:';
+      } else {
+        url = 'AdminDashboardServlet';
+        msg = 'All Data:';
+      }
+      fetch(url)
+        .then(r => r.json())
+        .then(data => {
+          let html = `<h4>${msg}</h4>`;
+          if (type === 'donor') {
+            html += '<table><tr><th>ID</th><th>Food</th><th>Qty</th><th>Status</th><th>Pickup</th></tr>';
+            (data.donations || []).forEach(r => {
+              html += `<tr><td>${r.id}</td><td>${r.foodtype}</td><td>${r.quantity}</td><td>${r.status}</td><td>${r.pickupLocation}</td></tr>`;
+            });
+            html += '</table>';
+          } else if (type === 'delivery') {
+            html += '<table><tr><th>ID</th><th>DonationID</th><th>RecipientID</th><th>Status</th></tr>';
+            (data.deliveries || []).forEach(r => {
+              html += `<tr><td>${r.id}</td><td>${r.donationId}</td><td>${r.recipientId}</td><td>${r.status}</td></tr>`;
+            });
+            html += '</table>';
+          } else {
+            html += 'All Donations:<table><tr><th>ID</th><th>Food</th><th>Qty</th><th>Status</th><th>Pickup</th></tr>';
+            (data.donations || []).forEach(r => {
+              html += `<tr><td>${r.id}</td><td>${r.foodtype}</td><td>${r.quantity}</td><td>${r.status}</td><td>${r.pickupLocation}</td></tr>`;
+            });
+            html += '</table><br>Deliveries:<table><tr><th>ID</th><th>DonationID</th><th>DeliveryPerson</th><th>RecipientID</th><th>Status</th></tr>';
+            (data.deliveries || []).forEach(r => {
+              html += `<tr><td>${r.id}</td><td>${r.donationId}</td><td>${r.deliveryPersonId}</td><td>${r.recipientId}</td><td>${r.status}</td></tr>`;
+            });
+            html += '</table><br>Recipients:<table><tr><th>ID</th><th>Name</th><th>Type</th><th>Contact</th><th>Phone</th><th>Address</th></tr>';
+            (data.recipients || []).forEach(r => {
+              html += `<tr><td>${r.id}</td><td>${r.name}</td><td>${r.recipientType}</td><td>${r.contactPerson}</td><td>${r.phone}</td><td>${r.address}</td></tr>`;
+            });
+            html += '</table>';
+          }
+          document.getElementById('dashboardPanel').innerHTML = html;
+        });
+    }
+  </script>
+</body>
+</html>

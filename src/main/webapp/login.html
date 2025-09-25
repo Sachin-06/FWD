@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <button onclick="location.href='index.html'">Home</button>
+      <button onclick="location.href='register.html'">Register</button>
+    </nav>
+    <h3>Login</h3>
+    <form id="loginForm" onsubmit="submitLogin(event)">
+      <input name="email" type="email" placeholder="Enter your email" required />
+      <input name="password" type="password" placeholder="Enter your password" required />
+      <button>Login</button>
+    </form>
+    <div id="msgLogin" class="msg"></div>
+  </div>
+  <script>
+    function submitLogin(e) {
+      e.preventDefault();
+      const fd = new FormData(document.getElementById('loginForm'));
+      fetch('LoginServlet', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(resp => {
+          const msg = document.getElementById('msgLogin');
+          msg.textContent = resp.message;
+          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
+          if(resp.status === 'success') setTimeout(() => location.href='dashboard.html', 1500);
+        });
+    }
+  </script>
+</body>
+</html>
