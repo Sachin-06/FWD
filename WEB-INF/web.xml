@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+                             http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+         version="3.1">
+
+  <servlet>
+    <servlet-name>LoginServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.LoginServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LoginServlet</servlet-name>
+    <url-pattern>/LoginServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RegisterServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.RegisterServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RegisterServlet</servlet-name>
+    <url-pattern>/RegisterServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>DonorSubmissionServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.DonorSubmissionServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DonorSubmissionServlet</servlet-name>
+    <url-pattern>/DonorSubmissionServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+    <servlet-name>DeliveryAssignmentServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.DeliveryAssignmentServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeliveryAssignmentServlet</servlet-name>
+    <url-pattern>/DeliveryAssignmentServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>DeliveryUpdateServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.DeliveryUpdateServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeliveryUpdateServlet</servlet-name>
+    <url-pattern>/DeliveryUpdateServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>RecipientServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.RecipientServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RecipientServlet</servlet-name>
+    <url-pattern>/RecipientServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>DonorDashboardServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.DonorDashboardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DonorDashboardServlet</servlet-name>
+    <url-pattern>/DonorDashboardServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>DeliveryDashboardServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.DeliveryDashboardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>DeliveryDashboardServlet</servlet-name>
+    <url-pattern>/DeliveryDashboardServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>AdminDashboardServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.AdminDashboardServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>AdminDashboardServlet</servlet-name>
+    <url-pattern>/AdminDashboardServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+    <servlet-name>LogoutServlet</servlet-name>
+    <servlet-class>com.foodwaste.servlet.LogoutServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>LogoutServlet</servlet-name>
+    <url-pattern>/LogoutServlet</url-pattern>
+  </servlet-mapping>
+
+</web-app>
