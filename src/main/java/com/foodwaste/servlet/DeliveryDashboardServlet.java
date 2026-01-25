@@ -15,6 +15,19 @@ public class DeliveryDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
           throws ServletException, IOException {
+    	
+    	//session check
+    	HttpSession session= request.getSession(false);
+    	if(session==null||session.getAttribute("role")==null) {
+    		response.sendRedirect("login.html");
+    		return;
+    	}
+    	
+    	//role check (delivery only)
+    	if(!"delivery".equals(session.getAttribute("role"))) {
+    		response.sendRedirect("login.html");
+    		return;
+    	}
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <button onclick="location.href='index.html'">Home</button>
+      <button onclick="location.href='login.html'">Login</button>
+    </nav>
+    <h3>Register</h3>
+    <form id="registerForm" onsubmit="submitRegister(event)">
+      <input name="name" placeholder="Enter your name" required />
+      <input name="email" type="email" placeholder="Enter your email" required />
+      <input name="password" type="password" placeholder="Create a password" required />
+      <select name="usertype" required>
+        <option value="">Select Role</option>
+        <option value="donor">Donor</option>
+        <option value="delivery">Delivery Person</option>
+        <option value="admin">Admin</option>
+      </select>
+      <input name="phone" placeholder="Enter your phone number" required />
+      <input name="address" placeholder="Enter your address" required />
+      <button>Register</button>
+    </form>
+    <div id="msgRegister" class="msg"></div>
+  </div>
+  <script>
+    function submitRegister(e) {
+      e.preventDefault();
+      const fd = new FormData(document.getElementById('registerForm'));
+      fetch('RegisterServlet', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(resp => {
+          const msg = document.getElementById('msgRegister');
+          msg.textContent = resp.message;
+          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
+          if(resp.status === 'success') setTimeout(() => location.href='login.html', 1500);
+        });
+    }
+  </script>
+</body>
+</html>

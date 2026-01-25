@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Donor Submission</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav><button onclick="location.href='index.html'">Home</button></nav>
+    <h3>Submit Excess Food</h3>
+    <form id="donorForm" onsubmit="submitDonor(event)">
+      <input name="donorid" placeholder="Your User ID" required />
+      <input name="foodtype" placeholder="Food Type" required />
+      <input name="quantity" placeholder="Quantity" required />
+      <input name="pickupLocation" placeholder="Pickup Location" required />
+      <button>Submit Donation</button>
+    </form>
+    <div id="msgDonor" class="msg"></div>
+  </div>
+  <script>
+    function submitDonor(e) {
+      e.preventDefault();
+      const fd = new FormData(document.getElementById('donorForm'));
+      fetch('DonorSubmissionServlet', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(resp => {
+          const msg = document.getElementById('msgDonor');
+          msg.textContent = resp.message;
+          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
+        });
+    }
+  </script>
+</body>
+</html>

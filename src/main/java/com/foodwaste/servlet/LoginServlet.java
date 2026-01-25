@@ -2,54 +2,59 @@ package com.foodwaste.servlet;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
-
 import java.io.*;
+import java.sql.*;
+
 import org.json.JSONObject;
-import com.foodwaste.model.*;
-import java.util.*;
+import com.foodwaste.util.DBConnection;
 
 public class LoginServlet extends HttpServlet {
-    
-	private static final long serialVersionUID = 1L;
-	
-	public static List<User> users=new ArrayList<>();
-	public static void addUser(User user) {
-		users.add(user);
-	}
-	
-	
-	
-	private User authenticate(String email,String password) {
-		
-		for(User user:users) {
-			
-			if (user.getEmail().equalsIgnoreCase(email)&&user.getPassword().equals(password)) {
-				
-				return user;
-			}
-		}
-		return null;
-	}
-	
-	@Override
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+    private static final long serialVersionUID = 1L;
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
+        JSONObject json = new JSONObject();
 
         String email = request.getParameter("email");
         String password = request.getParameter("password");
 
-        JSONObject json = new JSONObject();
-        
-        User user = authenticate(email,password);
-        if (user !=null) {
-            json.put("status", "success");
-            json.put("message", "Login successful!");
-        } else {
-            json.put("status", "fail");
-            json.put("message", "Invalid credentials");
+        try (Connection con = DBConnection.getConnection()) {
+
+            String sql = "SELECT id, type FROM users WHERE email=? AND password=?";
+            PreparedStatement ps = con.prepareStatement(sql);
+            ps.setString(1, email);
+            ps.setString(2, password);
+
+            ResultSet rs = ps.executeQuery();
+
+            if (rs.next()) {
+                int userId = rs.getInt("id");
+                String role = rs.getString("type");
+
+                // create session
+                HttpSession session = request.getSession();
+                session.setAttribute("userId", userId);
+                session.setAttribute("email", email);
+                session.setAttribute("role", role);
+
+                json.put("status", "success");
+                json.put("role", role);
+                json.put("message", "Login successful");
+
+            } else {
+                json.put("status", "fail");
+                json.put("message", "Invalid email or password");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            json.put("status", "error");
+            json.put("message", "Server error");
         }
 
         out.print(json.toString());

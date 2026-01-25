@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Add Recipient</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav><button onclick="location.href='index.html'">Home</button></nav>
+    <h3>Add Recipient</h3>
+    <form id="recipientForm" onsubmit="submitRecipient(event)">
+      <input name="name" placeholder="Organization Name" required />
+      <input name="contactPerson" placeholder="Contact Person" required />
+      <input name="phone" placeholder="Phone" required />
+      <input name="address" placeholder="Address" required />
+      <select name="recipientType" required>
+        <option value="">Select Type</option>
+        <option value="NGO">NGO</option>
+        <option value="Old Age Home">Old Age Home</option>
+        <option value="Shelter">Shelter</option>
+        <option value="Orphanage">Orphanage</option>
+        <option value="Other">Other</option>
+      </select>
+      <button>Add Recipient</button>
+    </form>
+    <div id="msgRecipient" class="msg"></div>
+  </div>
+  <script>
+    function submitRecipient(e) {
+      e.preventDefault();
+      const fd = new FormData(document.getElementById('recipientForm'));
+      fetch('RecipientServlet', { method: 'POST', body: fd })
+        .then(r => r.json())
+        .then(resp => {
+          const msg = document.getElementById('msgRecipient');
+          msg.textContent = resp.message;
+          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
+        });
+    }
+  </script>
+</body>
+</html>
