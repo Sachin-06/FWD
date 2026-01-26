@@ -1,90 +1,102 @@
 package com.foodwaste.servlet;
 
-import java.util.*;
 import javax.servlet.*;
-import com.foodwaste.model.*;
-import java.io.*;
 import javax.servlet.http.*;
+
+import java.io.*;
+
+
 import org.json.JSONObject;
+
+
+import java.sql.*;
+import com.foodwaste.util.DBConnection;
 
 public class DeliveryUpdateServlet extends HttpServlet{
 	
 	public static final long serialVersionUID=1L;
 	
-	private static List<Delivery>deliveries=DeliveryAssignmentServlet.deliveries;
-	private static List<Donation>donations=DonorSubmissionServlet.donations;
+	@Override
 	
 	protected void doPost(HttpServletRequest request,HttpServletResponse response)
 	throws ServletException,IOException{
 		
+		//response is in json format
 		response.setContentType("application/json");
 		PrintWriter out=response.getWriter();
 		
-		String deliveryIdStr=request.getParameter("deliveryid");
-		String status=request.getParameter("status");
-		String confirmationtype=request.getParameter("confirmationtype");
-		String confirmationdata=request.getParameter("confirmationdata");
+		JSONObject json=new JSONObject();
 		
+		//role check and session 
+		HttpSession session = request.getSession(false);
 		
-		int deliveryid;
+		//if no session or role is missing or role is nor delivery(no access)
+		if(session==null||session.getAttribute("role")==null||!"delivery".equals(session.getAttribute("role"))) {
+			json.put("status", "fail");
+			json.put("message", "Unauthorized access");
+			out.print(json.toString());
+			return;
+		}
+		
+		//delivery person input
+		int donationId=Integer.parseInt(request.getParameter("donation_id"));
+		
+		//new status: picked_up/delivered
+		String newStatus=request.getParameter("status");
+		
+		Connection con=null;
 		
 		try {
-			deliveryid=Integer.parseInt(deliveryIdStr);
-		}catch(NumberFormatException e) {
-			 JSONObject errorJson = new JSONObject();
-	            errorJson.put("status", "fail");
-	            errorJson.put("message", "Invalid delivery ID");
-	            out.print(errorJson.toString());
-	            return;
-	        }
-		
-		//find delivery record by id
-		 Delivery delivery = null;
-	        for (Delivery d : deliveries) {
-	            if (d.getId() == deliveryid) {
-	                delivery = d;
-	                break;
-	            }
-	        }
-	        
-	        
-	        
-	        if (delivery == null) {
-	            JSONObject errorJson = new JSONObject();
-	            errorJson.put("status", "fail");
-	            errorJson.put("message", "Delivery not found");
-	            out.print(errorJson.toString());
-	            return;
-	        }
+			con=DBConnection.getConnection();
+			
+			con.setAutoCommit(false);
+			
+			//update delivery table
+			String updateDeliverySql="UPDATE delivery SET status=? WHERE donation_id=?";
+			
+            PreparedStatement ps1 = con.prepareStatement(updateDeliverySql);
+            ps1.setString(1, newStatus);  // picked_up or delivered
+            ps1.setInt(2, donationId);
+            ps1.executeUpdate();
+            
+            //update donation table
+            String updateDonationSql =
+                    "UPDATE donations SET delivery_status = ? WHERE id = ?";
 
-	        // Update delivery status and confirmation info
+                PreparedStatement ps2 = con.prepareStatement(updateDonationSql);
+                ps2.setString(1, newStatus);  // keep both tables in sync
+                ps2.setInt(2, donationId);
+                ps2.executeUpdate();
+                
+                //if both are success save it
+                con.commit();
+                
+                //success message
+                json.put("status", "success");
+                json.put("message","Delivery status updates successfully");
+		}catch (Exception e) {
+			// if any fails rollback
+			try {
+				if(con!=null) con.rollback();
+			}catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			
+			e.printStackTrace();
+			json.put("status","error");
+			json.put("message", "server error");
+			
+		}finally {
+			//close DB connection always
+			
+			try {
+				if(con!=null) con.close();
+			}catch(Exception e) {
+				e.printStackTrace();
+			}
+		}
+		out.print(json.toString());
 
-	        delivery.setStatus(status);
-	        delivery.setConfirmationtype(confirmationtype);
-	        delivery.setConfirmationdata(confirmationdata);
-
-	        // Update linked donation status accordingly
-	        for (Donation don : donations) {
-	            if (don.getId() == delivery.getDonationid()) {
-	                if ("picked_up".equalsIgnoreCase(status)) {
-	                    don.setStatus("in_transit");
-	                } else if ("delivered".equalsIgnoreCase(status)) {
-	                    don.setStatus("delivered");
-	                }
-	                break;
-	            }
-	        }
-	        
-	        
-	        
-	        // Prepare success JSON response
-	        JSONObject successJson = new JSONObject();
-	        successJson.put("status", "success");
-	        successJson.put("message", "Delivery updated successfully");
-	        successJson.put("deliveryId", delivery.getId());
-	        successJson.put("newStatus", delivery.getStatus());
-
-	        out.print(successJson.toString());
 		}
 	}
 	

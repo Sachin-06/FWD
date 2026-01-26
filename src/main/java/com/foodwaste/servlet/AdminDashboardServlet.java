@@ -2,82 +2,118 @@ package com.foodwaste.servlet;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
 import java.io.*;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
-import com.foodwaste.model.Donation;
-import com.foodwaste.model.Recipient;
-import com.foodwaste.model.Delivery;
-import java.util.List;
+
+import java.sql.*;
+import com.foodwaste.util.DBConnection;
 
 public class AdminDashboardServlet extends HttpServlet {
     private static final long serialVersionUID = 1L;
 
-    private static List<Donation> donations = DonorSubmissionServlet.donations;
-    private static List<Delivery> deliveries = DeliveryAssignmentServlet.deliveries;
-    private static List<Recipient> recipients = RecipientServlet.recipients;
-
     @Override
-    
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-    	
-    	//session check
-    	HttpSession session= request.getSession(false);
-    	if(session==null||session.getAttribute("role")==null) {
-    		response.sendRedirect("login.html");
-    		return;
-    	}
-    	
-    	//role check (admin only)
-    	if(!"admin".equals(session.getAttribute("role"))) {
-    		response.sendRedirect("login.html");
-    		return;
-    	}
 
         response.setContentType("application/json");
         PrintWriter out = response.getWriter();
 
-        JSONArray donationsArr = new JSONArray();
-        for (Donation d : donations) {
-            JSONObject obj = new JSONObject();
-            obj.put("id", d.getId());
-            obj.put("foodtype", d.getFoodtype());
-            obj.put("quantity", d.getQuantity());
-            obj.put("status", d.getStatus());
-            obj.put("pickupLocation", d.getPickup());
-            obj.put("donorid", d.getDonorid());
-            donationsArr.put(obj);
-        }
-
-        JSONArray deliveriesArr = new JSONArray();
-        for (Delivery d : deliveries) {
-            JSONObject obj = new JSONObject();
-            obj.put("id", d.getId());
-            obj.put("donationId", d.getDonationid());
-            obj.put("deliveryPersonId", d.getPersonid());
-            obj.put("recipientId", d.getRecipientid());
-            obj.put("status", d.getStatus());
-            deliveriesArr.put(obj);
-        }
-
-        JSONArray recipientsArr = new JSONArray();
-        for (Recipient r : recipients) {
-            JSONObject obj = new JSONObject();
-            obj.put("id", r.getId());
-            obj.put("name", r.getName());
-            obj.put("recipientType", r.getRecipienttype());
-            obj.put("contactPerson", r.getContactperson());
-            obj.put("phone", r.getPhone());
-            obj.put("address", r.getAddress());
-            recipientsArr.put(obj);
-        }
-
         JSONObject result = new JSONObject();
-        result.put("status", "success");
-        result.put("donations", donationsArr);
-        result.put("deliveries", deliveriesArr);
-        result.put("recipients", recipientsArr);
+
+        // session and role check
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("role") == null
+                || !"admin".equals(session.getAttribute("role"))) {
+            result.put("status", "fail");
+            result.put("message", "Unauthorized access");
+            out.print(result.toString());
+            return;
+        }
+
+        Connection con = null;
+
+        try {
+            con = DBConnection.getConnection();
+
+            // fetch donations
+            JSONArray donationsArr = new JSONArray();
+
+            String donationSql =
+                    "SELECT id, donor_id, food_item, quantity, location, delivery_status FROM donations";
+
+            PreparedStatement ps1 = con.prepareStatement(donationSql);
+            ResultSet rs1 = ps1.executeQuery();
+
+            while (rs1.next()) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", rs1.getInt("id"));
+                obj.put("donor_id", rs1.getInt("donor_id"));
+                obj.put("food_item", rs1.getString("food_item"));
+                obj.put("quantity", rs1.getString("quantity"));
+                obj.put("location", rs1.getString("location"));
+                obj.put("delivery_status", rs1.getString("delivery_status"));
+                donationsArr.put(obj);
+            }
+
+            // fetch delivery assignments
+            JSONArray deliveriesArr = new JSONArray();
+
+            String deliverySql =
+                    "SELECT id, donation_id, delivery_person, status FROM delivery";
+
+            PreparedStatement ps2 = con.prepareStatement(deliverySql);
+            ResultSet rs2 = ps2.executeQuery();
+
+            while (rs2.next()) {
+                JSONObject obj = new JSONObject();
+                obj.put("id", rs2.getInt("id"));
+                obj.put("donation_id", rs2.getInt("donation_id"));
+                obj.put("delivery_person", rs2.getString("delivery_person"));
+                obj.put("status", rs2.getString("status"));
+                deliveriesArr.put(obj);
+            }
+
+//            // fetch recipients  ✅ FIXED PART (column names corrected)
+//            JSONArray recipientsArr = new JSONArray();
+//
+//            String recipientSql =
+//                    "SELECT id, name, recipienttype, contactperson, phone, address FROM recipients";
+//
+//            PreparedStatement ps3 = con.prepareStatement(recipientSql);
+//            ResultSet rs3 = ps3.executeQuery();
+//
+//            while (rs3.next()) {
+//                JSONObject obj = new JSONObject();
+//                obj.put("id", rs3.getInt("id"));
+//                obj.put("name", rs3.getString("name"));
+//                obj.put("recipienttype", rs3.getString("recipienttype"));
+//                obj.put("contactperson", rs3.getString("contactperson"));
+//                obj.put("phone", rs3.getString("phone"));
+//                obj.put("address", rs3.getString("address"));
+//                recipientsArr.put(obj);
+//            }
+
+            // final json response
+            result.put("status", "success");
+            result.put("donations", donationsArr);
+            result.put("deliveries", deliveriesArr);
+            //result.put("recipients", recipientsArr);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            result.put("status", "error");
+            result.put("message", "Server error");
+        } finally {
+            try {
+                if (con != null)
+                    con.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         out.print(result.toString());
     }
