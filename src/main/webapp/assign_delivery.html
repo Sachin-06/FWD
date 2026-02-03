@@ -1,33 +1,24 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Assign Delivery</title>
-  <link rel="stylesheet" href="style.css" />
+    <title>Assign Delivery</title>
 </head>
 <body>
-  <div class="container">
-    <nav><button onclick="location.href='index.html'">Home</button></nav>
-    <h3>Assign Delivery</h3>
-    <form id="assignForm" onsubmit="submitAssign(event)">
-      <input name="donationId" placeholder="Donation ID" required />
-      <input name="deliveryPersonId" placeholder="Delivery Person ID" required />
-      <input name="recipientId" placeholder="Recipient ID" required />
-      <button>Assign Delivery</button>
-    </form>
-    <div id="msgAssign" class="msg"></div>
-  </div>
-  <script>
-    function submitAssign(e) {
-      e.preventDefault();
-      const fd = new FormData(document.getElementById('assignForm'));
-      fetch('DeliveryAssignmentServlet', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(resp => {
-          const msg = document.getElementById('msgAssign');
-          msg.textContent = resp.message;
-          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
-        });
-    }
-  </script>
+<h2>Assign Delivery (Admin)</h2>
+
+<form action="DeliveryAssignmentServlet" method="post">
+    <label>Donation ID:</label><br>
+    <input type="number" name="donation_id" required><br><br>
+
+    <label>Delivery Person Name:</label><br>
+    <input type="text" name="delivery_person" required><br><br>
+
+    <button type="submit">Assign Delivery</button>
+</form>
+
+<br>
+<form action="LogoutServlet" method="post">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>

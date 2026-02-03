@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Register</title>
-  <link rel="stylesheet" href="style.css" />
+    <title>Register</title>
 </head>
 <body>
-  <div class="container">
-    <nav>
-      <button onclick="location.href='index.html'">Home</button>
-      <button onclick="location.href='login.html'">Login</button>
-    </nav>
-    <h3>Register</h3>
-    <form id="registerForm" onsubmit="submitRegister(event)">
-      <input name="name" placeholder="Enter your name" required />
-      <input name="email" type="email" placeholder="Enter your email" required />
-      <input name="password" type="password" placeholder="Create a password" required />
-      <select name="usertype" required>
-        <option value="">Select Role</option>
+<h2>Register</h2>
+
+<form id="registerForm">
+    <input type="text" name="name" placeholder="Name" required><br><br>
+    <input type="email" name="email" placeholder="Email" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+
+    <select name="usertype">
         <option value="donor">Donor</option>
-        <option value="delivery">Delivery Person</option>
         <option value="admin">Admin</option>
-      </select>
-      <input name="phone" placeholder="Enter your phone number" required />
-      <input name="address" placeholder="Enter your address" required />
-      <button>Register</button>
-    </form>
-    <div id="msgRegister" class="msg"></div>
-  </div>
-  <script>
-    function submitRegister(e) {
-      e.preventDefault();
-      const fd = new FormData(document.getElementById('registerForm'));
-      fetch('RegisterServlet', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(resp => {
-          const msg = document.getElementById('msgRegister');
-          msg.textContent = resp.message;
-          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
-          if(resp.status === 'success') setTimeout(() => location.href='login.html', 1500);
-        });
-    }
-  </script>
+        <option value="delivery">Delivery</option>
+    </select><br><br>
+
+    <button type="submit">Register</button>
+</form>
+
+<p id="msg"></p>
+
+<script>
+document.getElementById("registerForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("RegisterServlet", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("msg").innerText = data.message;
+
+        if (data.status === "success") {
+            setTimeout(() => {
+                window.location.href = "login.html";
+            }, 1500);
+        }
+    });
+});
+</script>
+
 </body>
 </html>

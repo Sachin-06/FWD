@@ -12,7 +12,7 @@ import java.io.PrintWriter;
 
 import org.json.JSONObject;
 
-@WebServlet("/LogoutServlet")
+//@WebServlet("/LogoutServlet")
 public class LogoutServlet extends HttpServlet {
 
     private static final long serialVersionUID = 1L;

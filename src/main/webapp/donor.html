@@ -1,34 +1,43 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Donor Submission</title>
-  <link rel="stylesheet" href="style.css" />
+    <title>Donor Dashboard</title>
 </head>
 <body>
-  <div class="container">
-    <nav><button onclick="location.href='index.html'">Home</button></nav>
-    <h3>Submit Excess Food</h3>
-    <form id="donorForm" onsubmit="submitDonor(event)">
-      <input name="donorid" placeholder="Your User ID" required />
-      <input name="foodtype" placeholder="Food Type" required />
-      <input name="quantity" placeholder="Quantity" required />
-      <input name="pickupLocation" placeholder="Pickup Location" required />
-      <button>Submit Donation</button>
-    </form>
-    <div id="msgDonor" class="msg"></div>
-  </div>
-  <script>
-    function submitDonor(e) {
-      e.preventDefault();
-      const fd = new FormData(document.getElementById('donorForm'));
-      fetch('DonorSubmissionServlet', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(resp => {
-          const msg = document.getElementById('msgDonor');
-          msg.textContent = resp.message;
-          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
-        });
-    }
-  </script>
+<h2>Donor Dashboard</h2>
+
+<form id="donationForm">
+    <input type="text" name="food_item" placeholder="Food Item" required><br><br>
+    <input type="text" name="quantity" placeholder="Quantity" required><br><br>
+    <input type="text" name="location" placeholder="Pickup Location" required><br><br>
+    <button type="submit">Submit Donation</button>
+</form>
+
+<p id="msg"></p>
+
+<form action="LogoutServlet" method="post">
+    <button type="submit">Logout</button>
+</form>
+
+<script>
+document.getElementById("donationForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch("DonorSubmissionServlet", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("msg").innerText = data.message;
+        if (data.status === "success") {
+            this.reset();
+        }
+    });
+});
+</script>
+
 </body>
 </html>

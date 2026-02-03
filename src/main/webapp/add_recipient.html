@@ -1,42 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Add Recipient</title>
-  <link rel="stylesheet" href="style.css" />
+    <title>Add Recipient</title>
 </head>
 <body>
-  <div class="container">
-    <nav><button onclick="location.href='index.html'">Home</button></nav>
-    <h3>Add Recipient</h3>
-    <form id="recipientForm" onsubmit="submitRecipient(event)">
-      <input name="name" placeholder="Organization Name" required />
-      <input name="contactPerson" placeholder="Contact Person" required />
-      <input name="phone" placeholder="Phone" required />
-      <input name="address" placeholder="Address" required />
-      <select name="recipientType" required>
-        <option value="">Select Type</option>
-        <option value="NGO">NGO</option>
-        <option value="Old Age Home">Old Age Home</option>
-        <option value="Shelter">Shelter</option>
-        <option value="Orphanage">Orphanage</option>
-        <option value="Other">Other</option>
-      </select>
-      <button>Add Recipient</button>
-    </form>
-    <div id="msgRecipient" class="msg"></div>
-  </div>
-  <script>
-    function submitRecipient(e) {
-      e.preventDefault();
-      const fd = new FormData(document.getElementById('recipientForm'));
-      fetch('RecipientServlet', { method: 'POST', body: fd })
-        .then(r => r.json())
-        .then(resp => {
-          const msg = document.getElementById('msgRecipient');
-          msg.textContent = resp.message;
-          msg.className = 'msg ' + (resp.status === 'success' ? 'success' : 'error');
-        });
-    }
-  </script>
+<h2>Add Recipient</h2>
+
+<form action="RecipientServlet" method="post">
+    <label>Name:</label><br>
+    <input type="text" name="name" required><br><br>
+
+    <label>Recipient Type:</label><br>
+    <input type="text" name="recipienttype" required><br><br>
+
+    <label>Contact Person:</label><br>
+    <input type="text" name="contactperson" required><br><br>
+
+    <label>Phone:</label><br>
+    <input type="text" name="phone" required><br><br>
+
+    <label>Address:</label><br>
+    <textarea name="address" required></textarea><br><br>
+
+    <button type="submit">Add Recipient</button>
+</form>
+
+<br>
+<form action="LogoutServlet" method="post">
+    <button type="submit">Logout</button>
+</form>
 </body>
 </html>
